@@ -1,97 +1,113 @@
 package com.polizaDeSeguros.model.entity;
 
-import com.polizaDeSeguros.enums.Roles;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotEmpty;
 
-@Entity // especifica la creacion de una entidad. Se coloca al inciio de la clase
+@Entity // especifica la creación de una entidad. Se coloca al inicio de la clase
 public class Usuario {
 
-	@Id // primary key de la entidad
-	@GeneratedValue(strategy = GenerationType.SEQUENCE) // establece que el id se va a generar de forma automatica y
-														// secuencial en la bd
-	private Long id;
+    @Id // primary key de la entidad
+    @GeneratedValue(strategy = GenerationType.SEQUENCE) // establece que el id se va a generar de forma automática y secuencial en la bd
+    private Long id;
 
-	@NotEmpty 
-	private String name;
+    @NotEmpty
+    private String nombre;
 
-	@NotEmpty 
-	private String lastname;
-	
-	@NotEmpty 
-	@Column(unique = true) 
-	private String dni;
+    @NotEmpty
+    private String apellido;
 
-	@NotEmpty 
-	@Column(unique = true)
-	private String email;
+    @NotEmpty
+    @Column(unique = true) // asegura que el DNI sea único
+    private String dni;
 
-	@Enumerated(EnumType.STRING) // almaceno el enum como string
-	private Roles rol;
+    @NotEmpty
+    private String telefono;
 
-	public Usuario() {
+    @NotEmpty
+    private String direccion;
 
-	}
+    @NotEmpty
+    private String rol;
 
-	public Usuario(String name, String lastname, String dni, String email, Roles rol) {
+    @NotEmpty
+    private String password; // Cambiar el tamaño si es necesario
 
-		this.name = name;
-		this.lastname = lastname;
-		this.dni = dni;
-		this.email = email;
-		this.rol = rol;
-	}
+    public Usuario() {
+    }
 
-	public Long getId() {
-		return id;
-	}
+    public Usuario(Long id, String nombre, String apellido, String dni, String telefono, String direccion, String rol, String password) {
+        this.id = id;
+        this.nombre = nombre;
+        this.apellido = apellido;
+        this.dni = dni;
+        this.telefono = telefono;
+        this.direccion = direccion;
+        this.rol = rol;
+        this.password = password;
+    }
 
+    public Long getId() {
+        return id;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public String getNombre() {
+        return nombre;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setNombre(String nombre) {
+        this.nombre = nombre;
+    }
 
-	public String getLastname() {
-		return lastname;
-	}
+    public String getApellido() {
+        return apellido;
+    }
 
-	public void setLastname(String lastname) {
-		this.lastname = lastname;
-	}
+    public void setApellido(String apellido) {
+        this.apellido = apellido;
+    }
 
-	public String getDni() {
-		return dni;
-	}
+    public String getDni() {
+        return dni;
+    }
 
-	public void setDni(String dni) {
-		this.dni = dni;
-	}
+    public void setDni(String dni) {
+        this.dni = dni;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public String getTelefono() {
+        return telefono;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public void setTelefono(String telefono) {
+        this.telefono = telefono;
+    }
 
-	public Roles getRol() {
-		return rol;
-	}
+    public String getDireccion() {
+        return direccion;
+    }
 
-	public void setRol(Roles rol) {
-		this.rol = rol;
-	}
+    public void setDireccion(String direccion) {
+        this.direccion = direccion;
+    }
 
+    public String getRol() {
+        return rol;
+    }
+
+    public void setRol(String rol) {
+        this.rol = rol;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }
+
