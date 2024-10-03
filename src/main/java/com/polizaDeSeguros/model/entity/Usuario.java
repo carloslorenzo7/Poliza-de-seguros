@@ -9,6 +9,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotEmpty;
 
 @Entity // especifica la creacion de una entidad. Se coloca al inciio de la clase
 public class Usuario {
@@ -18,16 +19,18 @@ public class Usuario {
 														// secuencial en la bd
 	private Long id;
 
-	@Column(nullable = false) // No permite que el campo sea nulo en la base de datos
+	@NotEmpty 
 	private String name;
 
-	@Column(nullable = false)
+	@NotEmpty 
 	private String lastname;
-
-	@Column(nullable = false, unique = true) // No permite que el campo sea nulo en la base de datos y que sea unico
+	
+	@NotEmpty 
+	@Column(unique = true) 
 	private String dni;
 
-	@Column(nullable = false, unique = true)
+	@NotEmpty 
+	@Column(unique = true)
 	private String email;
 
 	@Enumerated(EnumType.STRING) // almaceno el enum como string

@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.validation.constraints.NotEmpty;
 
 @Entity // especifica la creacion de una entidad. Se coloca al inciio de la clase
 public class Poliza {
@@ -21,7 +22,8 @@ public class Poliza {
 	@GeneratedValue(strategy = GenerationType.SEQUENCE) // establece que el id se va a generar de forma automatica y secuencial en la bd
 	private Long id;
 
-	@Column(nullable = false, unique = true)
+	@NotEmpty
+	@Column(unique = true)
 	private String numeroDePoliza;
 
 	private LocalDate fechaDeInicio; // LocalDate para que guarde solo fechas sin horario
