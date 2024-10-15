@@ -1,18 +1,28 @@
 package com.polizaDeSeguros.model.entity;
 
+import java.util.List;
+
+import com.polizaDeSeguros.enums.Roles;
+
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.Size;
 
 @Entity // especifica la creación de una entidad. Se coloca al inicio de la clase
+@Table(name = "usuario")
 public class Usuario {
 
 	@Id // primary key de la entidad
-	@GeneratedValue(strategy = GenerationType.SEQUENCE) // establece que el id se va a generar de forma automática y  secuencial en la bd
-														
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
 	@NotEmpty
@@ -22,7 +32,7 @@ public class Usuario {
 	private String apellido;
 
 	@NotEmpty
-	@Column(unique = true) // asegura que el DNI sea único
+	@Column(unique = true)
 	private String dni;
 
 	@NotEmpty
@@ -36,17 +46,22 @@ public class Usuario {
 	private String email;
 
 	@NotEmpty
-	private String rol;
+	@Enumerated(EnumType.STRING)
+	private Roles rol;
 
 	@NotEmpty
-	private String password; 
+	@Size(min = 8,message = "La contraseña debe tener al menos 8 caracteres")
+	private String password;
+
+	@OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true) // todas las operaciones en usuario tambien repercuten en poliza 
+	private List<Poliza> polizas; // Un usuario puede tener varias pólizas ya que cada numero de poliza corresponderia a un seguro
 
 	public Usuario() {
 	}
 
-	public Usuario( String nombre,String apellido, String dni,
-			String telefono, String direccion,  String email,  String rol,
-			 String password) {
+	public Usuario(String nombre, String apellido, String dni,
+			String telefono, String direccion,String email, Roles rol,
+			String password, List<Poliza> polizas) {
 		
 		this.nombre = nombre;
 		this.apellido = apellido;
@@ -56,13 +71,16 @@ public class Usuario {
 		this.email = email;
 		this.rol = rol;
 		this.password = password;
+		this.polizas = polizas;
 	}
 
 	public Long getId() {
 		return id;
 	}
 
-	
+	public void setId(Long id) {
+		this.id = id;
+	}
 
 	public String getNombre() {
 		return nombre;
@@ -112,11 +130,11 @@ public class Usuario {
 		this.email = email;
 	}
 
-	public String getRol() {
+	public Roles getRol() {
 		return rol;
 	}
 
-	public void setRol(String rol) {
+	public void setRol(Roles rol) {
 		this.rol = rol;
 	}
 
@@ -128,4 +146,13 @@ public class Usuario {
 		this.password = password;
 	}
 
+	public List<Poliza> getPolizas() {
+		return polizas;
+	}
+
+	public void setPolizas(List<Poliza> polizas) {
+		this.polizas = polizas;
+	}
+
+	
 }

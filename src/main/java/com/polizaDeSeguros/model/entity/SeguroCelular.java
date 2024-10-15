@@ -1,10 +1,11 @@
 package com.polizaDeSeguros.model.entity;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
 
 
 @Entity // especifica la creacion de una entidad. Se coloca al inciio de la clase
-
+@Table(name = "seguro_celular")
 public class SeguroCelular extends Seguro {
 
 	private String marca;
@@ -15,12 +16,16 @@ public class SeguroCelular extends Seguro {
 
 	}
 
-	public SeguroCelular(String descripcion, String marca, String modelo, String numeroDeSerie) {
+	
+
+	public SeguroCelular( String descripcion, String marca, String modelo, String numeroDeSerie) {
 		super(descripcion);
 		this.marca = marca;
 		this.modelo = modelo;
 		this.numeroDeSerie = numeroDeSerie;
 	}
+
+
 
 	public String getMarca() {
 		return marca;

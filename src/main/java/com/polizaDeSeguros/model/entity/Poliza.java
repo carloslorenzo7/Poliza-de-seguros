@@ -13,31 +13,36 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 @Entity // especifica la creacion de una entidad. Se coloca al inciio de la clase
+@Table(name = "poliza")
 public class Poliza {
 
 	@Id // primary key de la entidad
-	@GeneratedValue(strategy = GenerationType.SEQUENCE) // establece que el id se va a generar de forma automatica y secuencial en la bd
+	@GeneratedValue(strategy = GenerationType.IDENTITY) // establece que el id se va a generar de forma automatica y secuencial en la bd
 	private Long id;
 
 	@NotEmpty
 	@Column(unique = true)
 	private String numeroDePoliza;
-
+	
+	@NotNull
 	private LocalDate fechaDeInicio; // LocalDate para que guarde solo fechas sin horario
+	@NotNull
 	private LocalDate fechaDeVencimiento;
 
 	@Column(nullable = false)
 	private double montoAsegurado;
 
 	@ManyToOne // Relación muchos a uno con Usuario (un cliente puede tener muchas pólizas)
-	@JoinColumn(name = "usuario_id")
+	@JoinColumn(name = "usuario_id",nullable = false)
 	private Usuario usuario;
 
 	@ManyToOne // Relación muchos a uno con Seguro (una póliza tiene un tipo de seguro)
-	@JoinColumn(name = "seguro_id")
+	@JoinColumn(name = "seguro_id",nullable = false)
 	private Seguro tipoDeSeguro; // referencia a la clase abstracta seguro
 
 	@Enumerated(EnumType.STRING) // Almacena el enum como texto en la base de datos
@@ -48,9 +53,8 @@ public class Poliza {
 
 	}
 
-	public Poliza(Long id, String numeroDePoliza, LocalDate fechaDeInicio, LocalDate fechaDeVencimiento,
+	public Poliza( String numeroDePoliza, LocalDate fechaDeInicio, LocalDate fechaDeVencimiento,
 			double montoAsegurado, Usuario usuario, Seguro tipoDeSeguro, EstadoPoliza estado) {
-		this.id = id;
 		this.numeroDePoliza = numeroDePoliza;
 		this.fechaDeInicio = fechaDeInicio;
 		this.fechaDeVencimiento = fechaDeVencimiento;
@@ -62,6 +66,10 @@ public class Poliza {
 
 	public Long getId() {
 		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getNumeroDePoliza() {
@@ -119,5 +127,7 @@ public class Poliza {
 	public void setEstado(EstadoPoliza estado) {
 		this.estado = estado;
 	}
+
+	
 
 }
