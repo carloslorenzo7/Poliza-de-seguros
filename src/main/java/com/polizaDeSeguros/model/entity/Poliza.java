@@ -16,13 +16,14 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-@Entity // especifica la creacion de una entidad. Se coloca al inciio de la clase
+@Entity 
 @Table(name = "poliza")
 public class Poliza {
 
-	@Id // primary key de la entidad
-	@GeneratedValue(strategy = GenerationType.IDENTITY) // establece que el id se va a generar de forma automatica y secuencial en la bd
+	@Id 
+	@GeneratedValue(strategy = GenerationType.IDENTITY) 
 	private Long id;
 
 	@NotEmpty
@@ -30,7 +31,7 @@ public class Poliza {
 	private String numeroDePoliza;
 	
 	@NotNull
-	private LocalDate fechaDeInicio; // LocalDate para que guarde solo fechas sin horario
+	private LocalDate fechaDeInicio; 
 	@NotNull
 	private LocalDate fechaDeVencimiento;
 
@@ -39,15 +40,16 @@ public class Poliza {
 
 	@ManyToOne // Relación muchos a uno con Usuario (un cliente puede tener muchas pólizas)
 	@JoinColumn(name = "usuario_id",nullable = false)
+	@JsonIgnore
 	private Usuario usuario;
 
 	@ManyToOne // Relación muchos a uno con Seguro (una póliza tiene un tipo de seguro)
 	@JoinColumn(name = "seguro_id",nullable = false)
 	private Seguro tipoDeSeguro; // referencia a la clase abstracta seguro
 
-	@Enumerated(EnumType.STRING) // Almacena el enum como texto en la base de datos
+	@Enumerated(EnumType.STRING) 
 	@Column(nullable = false)
-	private EstadoPoliza estado; // Enum para el estado de la póliza
+	private EstadoPoliza estado; 
 
 	public Poliza() {
 

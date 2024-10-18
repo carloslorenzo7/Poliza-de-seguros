@@ -17,11 +17,11 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 
-@Entity // especifica la creación de una entidad. Se coloca al inicio de la clase
+@Entity 
 @Table(name = "usuario")
 public class Usuario {
 
-	@Id // primary key de la entidad
+	@Id 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
