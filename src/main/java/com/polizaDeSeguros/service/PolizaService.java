@@ -114,20 +114,20 @@ public class PolizaService {
 
 	// método para actualizar una póliza
 	public Poliza actualizarPoliza(Long id, PolizaRequest polizaRequest) {
-	    // Buscar la póliza existente por ID
+	    
 	    Optional<Poliza> optionalPoliza = polizaRepository.findById(id);
 
 	    if (optionalPoliza.isPresent()) {
 	        Poliza polizaExistente = optionalPoliza.get();
 
-	        // Actualizar los atributos de la póliza
+	        
 	        polizaExistente.setNumeroDePoliza(polizaRequest.getNumeroDePoliza());
 	        polizaExistente.setFechaDeInicio(polizaRequest.getFechaDeInicio());
 	        polizaExistente.setFechaDeVencimiento(polizaRequest.getFechaDeVencimiento());
 	        polizaExistente.setMontoAsegurado(polizaRequest.getMontoAsegurado());
 	        polizaExistente.setEstado(polizaRequest.getEstado());
 
-	        // Actualizar el tipo de seguro
+	        
 	        Seguro seguro = polizaExistente.getTipoDeSeguro();
 	        String tipoDeSeguro = polizaRequest.getTipoDeSeguro();
 
