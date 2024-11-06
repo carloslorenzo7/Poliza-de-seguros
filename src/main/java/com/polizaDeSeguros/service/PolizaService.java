@@ -18,6 +18,9 @@ import com.polizaDeSeguros.repository.SeguroCelularRepository;
 import com.polizaDeSeguros.repository.SeguroInmuebleRepository;
 import com.polizaDeSeguros.repository.UsuarioRepository;
 
+import exceptions.exception.PolizaException;
+import exceptions.exception.SeguroException;
+
 @Service
 public class PolizaService {
 
@@ -41,13 +44,37 @@ public class PolizaService {
 		this.seguroInmuebleRepository = seguroInmuebleRepository;
 	}
 
-	public Poliza crearPoliza(PolizaRequest polizaRequest) {
+	
+	// metodo para crear poliza
+	
+	public Poliza crearPoliza(PolizaRequest polizaRequest) throws PolizaException, SeguroException {
 		System.out.println(polizaRequest.toString()+ "Hola soy To.string");
-		Poliza poliza = new Poliza();
 
+		if(polizaRequest.getUsuarioId()== null) {
+			throw new PolizaException(" ID de usuario faltante para la creacion de una poliza");
+		}
+		
+		if(polizaRequest.getNumeroDePoliza()== null) {
+			throw new PolizaException("Numero de poliza faltante para la creacion de poliza");
+		}
+		if(polizaRequest.getFechaDeInicio()== null) {
+			throw new PolizaException("Numero de inicio faltante para la creacion de poliza");
+		}
+		if(polizaRequest.getFechaDeVencimiento()== null) {
+			throw new PolizaException("Numero de vencimiento faltante para la creacion de poliza");
+		}
+		
+		if(polizaRequest.getMontoAsegurado()<= 0) {
+			throw new PolizaException("Monto asegurado faltante o invalido para la creacion de poliza");
+		}
+		
+		
 		// Asigno el usuario a la póliza
 		Usuario usuario = usuarioRepository.findById(polizaRequest.getUsuarioId()).orElseThrow(
-				() -> new IllegalArgumentException("Usuario no encontrado con id: " + polizaRequest.getUsuarioId()));
+				() -> new PolizaException("Usuario no encontrado con id: " + polizaRequest.getUsuarioId()));
+		
+		Poliza poliza = new Poliza();
+		
 		poliza.setUsuario(usuario);
 		poliza.setNumeroDePoliza(polizaRequest.getNumeroDePoliza());
 		poliza.setFechaDeInicio(polizaRequest.getFechaDeInicio());
@@ -63,6 +90,11 @@ public class PolizaService {
 
 		switch (tipoDeSeguro) {
 		case "SEGURO_AUTO":
+			
+			if(polizaRequest.getDescripcionAuto() == null || polizaRequest.getMarcaAuto()== null || polizaRequest.getModeloAuto()== null|| polizaRequest.getPatenteAuto()== null) {
+				throw new SeguroException("Informacion de auto faltatante para la creacion del seguro auto ");
+			}
+
 			SeguroAuto seguroAuto = new SeguroAuto();
 			seguroAuto.setDescripcion(polizaRequest.getDescripcionAuto());
 			seguroAuto.setMarca(polizaRequest.getMarcaAuto());
@@ -73,6 +105,12 @@ public class PolizaService {
 			break;
 
 		case "SEGURO_CELULAR":
+			
+			if (polizaRequest.getDescripcionCelular() == null || polizaRequest.getMarcaCelular() == null || 
+            polizaRequest.getModeloCelular() == null || polizaRequest.getNumeroDeSerieCelular() == null) {
+            throw new SeguroException("Información del celular faltante para la creación del seguro de celular");
+        }
+			
 			System.out.println("Entre aca");
 			SeguroCelular seguroCelular = new SeguroCelular();
 			seguroCelular.setDescripcion(polizaRequest.getDescripcionCelular());
@@ -84,6 +122,11 @@ public class PolizaService {
 			break;
 
 		case "SEGURO_INMUEBLE":
+			
+			 if (polizaRequest.getDescripcionInmueble() == null || polizaRequest.getDireccionInmueble() == null || 
+	            polizaRequest.getTipoDeConstruccionInmueble() == null) {
+	            throw new SeguroException("Información del inmueble faltante para la creación del seguro de inmueble");
+	        }
 			SeguroInmueble seguroInmueble = new SeguroInmueble();
 			seguroInmueble.setDescripcion(polizaRequest.getDescripcionInmueble());
 			seguroInmueble.setDireccion(polizaRequest.getDireccionInmueble());
@@ -108,17 +151,28 @@ public class PolizaService {
 
 	// metodo para buscar por id
 
-	public Optional<Poliza> obtenerPolizaPorId(Long id) {
-		return polizaRepository.findById(id);
+	public Poliza obtenerPolizaPorId(Long id) throws PolizaException {
+	    return polizaRepository.findById(id)
+	            .orElseThrow(() -> new PolizaException("Póliza no encontrada con ID: " + id));
 	}
 
 	// método para actualizar una póliza
-	public Poliza actualizarPoliza(Long id, PolizaRequest polizaRequest) {
-	    
+	public Poliza actualizarPoliza(Long id, PolizaRequest polizaRequest) throws PolizaException ,SeguroException{
+		
+		
+		 System.out.println("Buscando póliza con ID: " + id);
+		    System.out.println(polizaRequest.toString() + " - Datos de la solicitud");
+		    
+		    
 	    Optional<Poliza> optionalPoliza = polizaRepository.findById(id);
+	    
+	    if (optionalPoliza.isEmpty()) {
+            throw new PolizaException("Póliza no encontrada con ID: " + id);
+        }
 
-	    if (optionalPoliza.isPresent()) {
+	    
 	        Poliza polizaExistente = optionalPoliza.get();
+	        System.out.println("Póliza encontrada: " + polizaExistente.toString());
 
 	        
 	        polizaExistente.setNumeroDePoliza(polizaRequest.getNumeroDePoliza());
@@ -141,7 +195,7 @@ public class PolizaService {
 	                    seguroAuto.setPatente(polizaRequest.getPatenteAuto());
 	                    seguroAutoRepository.save(seguroAuto);
 	                } else {
-	                    throw new IllegalArgumentException("El tipo de seguro no coincide con la póliza existente.");
+	                    throw new SeguroException("El tipo de seguro no coincide con la póliza existente.");
 	                }
 	                break;
 
@@ -154,7 +208,7 @@ public class PolizaService {
 	                    seguroCelular.setNumeroDeSerie(polizaRequest.getNumeroDeSerieCelular());
 	                    seguroCelularRepository.save(seguroCelular);
 	                } else {
-	                    throw new IllegalArgumentException("El tipo de seguro no coincide con la póliza existente.");
+	                    throw new SeguroException("El tipo de seguro no coincide con la póliza existente.");
 	                }
 	                break;
 
@@ -166,25 +220,26 @@ public class PolizaService {
 	                    seguroInmueble.setTipoDeConstruccion(polizaRequest.getTipoDeConstruccionInmueble());
 	                    seguroInmuebleRepository.save(seguroInmueble);
 	                } else {
-	                    throw new IllegalArgumentException("El tipo de seguro no coincide con la póliza existente.");
+	                    throw new SeguroException("El tipo de seguro no coincide con la póliza existente.");
 	                }
 	                break;
 
 	            default:
 	                throw new IllegalArgumentException("Tipo de seguro no válido: " + tipoDeSeguro);
 	        }
-
+	        System.out.println("Póliza actualizada correctamente");
 	        return polizaRepository.save(polizaExistente);
-	    } else {
-	        throw new RuntimeException("Póliza no encontrada con ID: " + id);
-	    }
-	}
+	    } 
+	
 
 
 	// metodo para eliminar poliza
 
-	public void eliminarPoliza(Long id) {
-		polizaRepository.deleteById(id);
-	}
+	 public void eliminarPoliza(Long id) throws PolizaException {
+	        if (!polizaRepository.existsById(id)) {
+	            throw new PolizaException("Póliza no encontrada con ID: " + id);
+	        }
+	        polizaRepository.deleteById(id);
+	    }
 
 }

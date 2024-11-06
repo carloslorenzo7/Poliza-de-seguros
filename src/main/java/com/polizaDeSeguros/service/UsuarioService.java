@@ -14,6 +14,7 @@ import exceptions.exception.ErrorAlCrearUsuarioException;
 import exceptions.exception.ErrorAlEliminarUsuarioException;
 import exceptions.exception.ErrorAlModificarUsuarioException;
 import exceptions.exception.UsuarioNoEncontradoException;
+import exceptions.exception.ValidacionUsuarioException;
 
 @Service
 public class UsuarioService {
@@ -26,14 +27,37 @@ public class UsuarioService {
 
 	// Creo un nuevo Usuario (cliente)
 
-	public Usuario crearUsuario(Usuario usuario) throws ErrorAlCrearUsuarioException, ContraseñaInvalidaException {
+	public Usuario crearUsuario(Usuario usuario) throws ErrorAlCrearUsuarioException, ValidacionUsuarioException {
 
 		if (usuario == null) {
-			throw new ErrorAlCrearUsuarioException("Error al crear usuario: el usuario no puede ser null.");
+			throw new ValidacionUsuarioException("Error al crear usuario: el usuario no puede ser null.");
 		}
 
-		if (usuario.getPassword().length() < 8) {
-			throw new ContraseñaInvalidaException("La contraseña debe tener al menos 8 caracteres.");
+		if (usuario.getNombre() == null || usuario.getNombre().length() < 5) {
+			 System.out.println("Lanzando ValidacionUsuarioException para el nombre");
+			throw new ValidacionUsuarioException("El nombre debe tener al menos 5 caracteres.");
+		}
+		if (usuario.getApellido() == null || usuario.getApellido().length() < 5) {
+			throw new ValidacionUsuarioException("El apellido debe tener al menos 5 caracteres.");
+		}
+
+		if (usuario.getDni() == null || !usuario.getDni().matches("\\d{7,8}")) {
+			throw new ValidacionUsuarioException("El DNI debe tener entre 7 y 8 dígitos.");
+		}
+
+		if (usuario.getTelefono() == null || !usuario.getTelefono().matches("\\d{8,15}")) {
+			throw new ValidacionUsuarioException("El teléfono debe tener entre 8 y 15 dígitos.");
+		}
+
+		if (usuario.getDireccion() == null || usuario.getDireccion().length() < 5) {
+			throw new ValidacionUsuarioException("La dirección debe tener al menos 5 caracteres.");
+		}
+		if (usuario.getEmail() == null || !usuario.getEmail().contains("@")) {
+			throw new ValidacionUsuarioException("El email debe contener un '@' válido.");
+		}
+
+		if (usuario.getPassword() == null || usuario.getPassword().length() < 8) {
+			throw new ValidacionUsuarioException("La contraseña debe tener al menos 8 caracteres.");
 		}
 
 		usuario.setNombre(usuario.getNombre());
@@ -69,7 +93,7 @@ public class UsuarioService {
 	}
 
 	// Modificar un usuario (Admin)
-	public Usuario modificarUsuario(Long id, Usuario usuarioModificado) throws ErrorAlModificarUsuarioException {
+	public Usuario modificarUsuario(Long id, Usuario usuarioModificado) throws ErrorAlModificarUsuarioException, UsuarioNoEncontradoException {
 		Usuario usuario = usuarioRepository.findById(id)
 				.orElseThrow(() -> new ErrorAlModificarUsuarioException("Error al modificar usuario"));
 
@@ -86,7 +110,7 @@ public class UsuarioService {
 	}
 
 	// Eliminar usuario (Admin)
-	public void eliminarUsuario(Long id) throws ErrorAlEliminarUsuarioException {
+	public void eliminarUsuario(Long id) throws ErrorAlEliminarUsuarioException, UsuarioNoEncontradoException {
 		usuarioRepository.findById(id)
 				.orElseThrow(() -> new ErrorAlEliminarUsuarioException("Error al eliminar: Usuario no encontrado"));
 
